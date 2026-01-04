@@ -1,0 +1,58 @@
+pipeline {
+    agent { label 'aws-agent' }
+
+    stages {
+        stage('Checkout Source') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Setup AWS Credentials') {
+            steps {
+                // 'aws-creds' is the ID of your credentials in Jenkins
+               withCredentials([aws(credentialsId: 'aws-creds')]) {     
+                  sh '''
+                        aws configure set region ap-southeast-1
+                        aws sts get-caller-identity
+                        terraform version
+                        kubectl version --client
+                    '''
+                }
+            }
+        }
+
+        stage('Terraform Init & Plan') {
+            steps {
+                // Since Jenkinsfile is inside 'vpc', we enter that directory
+               withCredentials([aws(credentialsId: 'aws-creds')]) { 
+                  dir('eks') {
+                      sh 'terraform init'
+                      sh 'terraform plan -out=tfplan'
+                }
+            }
+        }
+    }
+
+        stage('Terraform apply') {
+            steps {
+                // Since Jenkinsfile is inside 'vpc', we enter that directory
+               withCredentials([aws(credentialsId: 'aws-creds')]) {
+                  dir('eks') {
+                      echo 'applying the terraform code'
+                      #sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+    }
+}
+
+    post {
+        success {
+            sh '''
+                echo "updating config part for the application"
+                aws eks --region ap-southeast-1 update-kubeconfig --name myekscluster
+            '''
+        }
+    }
+}
