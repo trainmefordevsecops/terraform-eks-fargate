@@ -37,7 +37,7 @@ pipeline {
 
     post {
         success {
-            sh 'kubectl get nodes'
+            sh 'created networking part for the application'
         }
     }
 }
