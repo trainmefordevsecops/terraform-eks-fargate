@@ -18,9 +18,11 @@ locals {
 ################################################################################
 
 data "terraform_remote_state" "network" {
-  backend = "local"
+  backend = "s3"
   config = {
-    path = "../vpc/terraform.tfstate"
+    bucket = "tf-state-iac-demo"
+    key    = "network/terraform.tfstate"
+    region  = "ap-southeast-1"
   }
 }
 
