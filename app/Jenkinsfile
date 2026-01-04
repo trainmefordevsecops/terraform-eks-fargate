@@ -25,6 +25,7 @@ pipeline {
 
         stage('Deploying Manifests') {
             steps {
+               withCredentials([aws(credentialsId: 'aws-creds')]) {
                 // Ensure we are in the 'app' directory if that's where your YAMLs live
                 dir('app') {
                     sh 'kubectl apply -f deployment.yaml'
@@ -33,6 +34,7 @@ pipeline {
             }
         }
     }
+ }
 
     post {
         success {
