@@ -40,8 +40,8 @@ pipeline {
                withCredentials([aws(credentialsId: 'aws-creds')]) {
                   dir('eks') {
                       echo 'applying the terraform code'
-                      sh 'terraform apply -auto-approve'
-                      //sh 'terraform destroy -auto-approve'
+                      //sh 'terraform apply -auto-approve'
+                      sh 'terraform destroy -auto-approve'
                 }
             }
         }
