@@ -25,13 +25,15 @@ pipeline {
         stage('Terraform Init & Plan') {
             steps {
                 // Since Jenkinsfile is inside 'vpc', we enter that directory
-                dir('vpc') {
-                    sh 'terraform init'
-                    sh 'terraform plan -out=tfplan'
+               withCredentials([aws(credentialsId: 'aws-creds')]) { 
+                  dir('vpc') {
+                      sh 'terraform init'
+                      sh 'terraform plan -out=tfplan'
                 }
             }
         }
     }
+}
 
     post {
         success {
