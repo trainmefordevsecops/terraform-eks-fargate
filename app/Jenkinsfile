@@ -17,7 +17,7 @@ pipeline {
         stage('EKS Authentication') {
             steps {
                 withCredentials([aws(credentialsId: 'aws-creds')]) {
-                    sh "aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
+                    //sh "aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
                     echo "Kubeconfig updated for cluster: ${CLUSTER_NAME}"
                 }
             }
