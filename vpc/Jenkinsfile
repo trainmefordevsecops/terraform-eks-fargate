@@ -39,8 +39,8 @@ pipeline {
                 // Since Jenkinsfile is inside 'vpc', we enter that directory
                withCredentials([aws(credentialsId: 'aws-creds')]) {
                   dir('vpc') {
-                      sh 'terraform apply -auto-approve'
-                      //sh 'terraform destroy -auto-approve'
+                      //sh 'terraform apply -auto-approve'
+                      sh 'terraform destroy -auto-approve'
                 }
             }
         }
