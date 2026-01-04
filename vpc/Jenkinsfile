@@ -8,6 +8,24 @@ pipeline {
             }
         }
 
+        stage('Setup AWS Credentials') {
+            steps {
+                // 'aws-creds' is the ID of your credentials in Jenkins
+                withCredentials([usernamePassword(credentialsId: 'aws-creds', 
+                                 passwordVariable: 'AWS_SECRET_ACCESS_KEY', 
+                                 usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    
+                    // Setting a default region is required for Terraform/AWS CLI
+                    sh 'aws configure set region ap-southeast-1'
+                    
+                    echo "AWS Credentials and region configured."
+                    
+                    // Verify connectivity
+                    sh 'aws sts get-caller-identity'
+                }
+            }
+        }
+
         stage('Version Check') {
             steps {
                 sh '''
