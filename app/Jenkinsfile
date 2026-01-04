@@ -28,10 +28,10 @@ pipeline {
                withCredentials([aws(credentialsId: 'aws-creds')]) {
                 // Ensure we are in the 'app' directory if that's where your YAMLs live
                 dir('app') {
-                    //sh 'kubectl apply -f deployment.yaml'
-                    sh 'kubectl delete -f deployment.yaml'
-                    //sh 'kubectl apply -f service.yaml'
-                    sh 'kubectl delete -f service.yaml'
+                    sh 'kubectl apply -f deployment.yaml'
+                    //sh 'kubectl delete -f deployment.yaml'
+                    sh 'kubectl apply -f service.yaml'
+                    //sh 'kubectl delete -f service.yaml'
                 }
             }
         }
@@ -42,12 +42,12 @@ pipeline {
         success {
             echo "Deployment successful! Checking pods..."
             echo "Manifests applied. Waiting 7 minutes for resources to stabilize..."
-            //sleep(time: 5, unit: 'MINUTES')
+            sleep(time: 5, unit: 'MINUTES')
             sh 'kubectl get pods || true'
         }
         always {
             // Optional: cleanup the local kubeconfig for security
-            sh 'rm -f ~/.kube/config'
+            //sh 'rm -f ~/.kube/config'
         }
     }
 }
