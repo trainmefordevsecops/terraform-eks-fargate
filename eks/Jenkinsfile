@@ -40,7 +40,8 @@ pipeline {
                withCredentials([aws(credentialsId: 'aws-creds')]) {
                   dir('eks') {
                       echo 'applying the terraform code'
-                      sh 'terraform apply -auto-approve'
+                      //sh 'terraform apply -auto-approve'
+                      sh 'terraform destroy -auto-approve'
                 }
             }
         }
@@ -50,8 +51,7 @@ pipeline {
     post {
         success {
             sh '''
-                echo "updating config part for the application"
-                #aws eks --region ap-southeast-1 update-kubeconfig --name myekscluster
+                echo "cluster creation completed"
             '''
         }
     }
