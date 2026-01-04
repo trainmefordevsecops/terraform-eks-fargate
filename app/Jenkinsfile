@@ -47,7 +47,7 @@ pipeline {
         }
         always {
             // Optional: cleanup the local kubeconfig for security
-            //sh 'rm -f ~/.kube/config'
+            sh 'rm -f ~/.kube/config'
         }
     }
 }
