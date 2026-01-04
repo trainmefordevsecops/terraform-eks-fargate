@@ -37,7 +37,9 @@ pipeline {
 
     post {
         success {
-            sh 'created networking part for the application'
+            sh '''
+                echo "created networking part for the application"
+            '''
         }
     }
 }
