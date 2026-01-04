@@ -39,6 +39,8 @@ pipeline {
     post {
         success {
             echo "Deployment successful! Checking pods..."
+            echo "Manifests applied. Waiting 7 minutes for resources to stabilize..."
+            sleep(time: 7, unit: 'MINUTES')
             sh 'kubectl get pods'
         }
         always {
