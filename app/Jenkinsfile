@@ -1,0 +1,47 @@
+pipeline {
+    agent { label 'aws-agent' }
+
+    environment {
+        AWS_DEFAULT_REGION = 'ap-southeast-1'
+        CLUSTER_NAME = 'myekscluster'
+    }
+
+    stages {
+        stage('Checkout Source') {
+            steps {
+                // Pulls deployment.yaml and service.yaml from your repo
+                checkout scm
+            }
+        }
+
+        stage('EKS Authentication') {
+            steps {
+                withCredentials([aws(credentialsId: 'aws-creds')]) {
+                    sh "aws eks --region ${AWS_DEFAULT_REGION} update-kubeconfig --name ${CLUSTER_NAME}"
+                    echo "Kubeconfig updated for cluster: ${CLUSTER_NAME}"
+                }
+            }
+        }
+
+        stage('Deploying Manifests') {
+            steps {
+                // Ensure we are in the 'app' directory if that's where your YAMLs live
+                dir('app') {
+                    sh 'kubectl apply -f deployment.yaml'
+                    sh 'kubectl apply -f service.yaml'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment successful! Checking pods..."
+            sh 'kubectl get pods'
+        }
+        always {
+            // Optional: cleanup the local kubeconfig for security
+            sh 'rm -f ~/.kube/config'
+        }
+    }
+}
