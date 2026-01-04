@@ -1,0 +1,37 @@
+pipeline {
+    agent { label 'aws-agent' }
+
+    stages {
+        stage('Checkout Source') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Version Check') {
+            steps {
+                sh '''
+                    kubectl version --client
+                    eksctl version
+                    terraform version
+                '''
+            }
+        }
+
+        stage('Terraform Init & Plan') {
+            steps {
+                // Since Jenkinsfile is inside 'vpc', we enter that directory
+                dir('vpc') {
+                    sh 'terraform init'
+                    sh 'terraform plan -out=tfplan'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            sh 'kubectl get nodes'
+        }
+    }
+}
