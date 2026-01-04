@@ -33,6 +33,17 @@ pipeline {
             }
         }
     }
+
+        stage('Terraform apply') {
+            steps {
+                // Since Jenkinsfile is inside 'vpc', we enter that directory
+               withCredentials([aws(credentialsId: 'aws-creds')]) {
+                  dir('vpc') {
+                      sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+    }
 }
 
     post {
